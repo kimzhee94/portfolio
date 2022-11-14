@@ -14,4 +14,7 @@ public class MyScanner {
 		return numberVO;
 	}
 	
+	void close() {
+		sc.close();
+	}
 }

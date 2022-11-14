@@ -3,17 +3,17 @@ package calculator;
 import java.util.*;
 
 public class TotalCtrl {
+	NumberVO numberVO = new NumberVO(); // getter, setter
+	
+	Calculator calc = new Calculator(); // 처리부
+	
+	Storage storage = new Storage(); // 저장부
+	
+	MyScanner scanner = new MyScanner(); // 입력부 -- set
+	
+	Printer printer = new Printer(); // 출력부
 	
 	public void start() {
-		NumberVO numberVO = new NumberVO(); // getter, setter
-		
-		Calculator calc = new Calculator(); // 처리부
-		
-		Storage storage = new Storage(); // 저장부
-		
-		MyScanner scanner = new MyScanner(); // 입력부 -- set
-		
-		Printer printer = new Printer(); // 출력부
 		
 		outer : do {
 			printer.toString("종료를 원하시면 'ESC'를 입력하세요.", true);
@@ -102,7 +102,8 @@ public class TotalCtrl {
 			
 			printer.toString("☞ 결과 : " + storage.getLastResult(), true);
 		} while (true);
-		
+	
+		scanner.close();
 	}
 
 
