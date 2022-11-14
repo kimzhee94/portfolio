@@ -4,90 +4,103 @@ import java.util.*;
 
 public class TotalCtrl {
 	
-	public void start(Scanner sc) {
-		System.out.println("======= 자바 계산기 =======");
+	public void start() {
+		NumberVO numberVO = new NumberVO(); // getter, setter
 		
-		Calculator calc = new Calculator();
-		String inputValue = "";
+		Calculator calc = new Calculator(); // 처리부
+		
+		Storage storage = new Storage(); // 저장부
+		
+		MyScanner scanner = new MyScanner(); // 입력부 -- set
+		
+		Printer printer = new Printer(); // 출력부
 		
 		outer : do {
-			System.out.println("종료를 원하시면 'ESC'를 입력하세요.");
+			printer.toString("종료를 원하시면 'ESC'를 입력하세요.", true);
 			
-			if(calc.getFirstNum() != null) {
-				System.out.println("초기화를 원하시면 'AC'를 입력하세요.");
-				System.out.print("▶ 지난 연산 결과 값 : ");
-				System.out.println(calc.getFirstNum());
+			if(storage.getLastResult() != null) {
+				printer.toString(null, true);
+				printer.toString("▶ 지난 연산 결과 값 : " + storage.getLastResult(), true);
 			}
+			
 			else {
 				do {
+					printer.toString("▶ 첫번째 수를 입력하세요. : ", false);
 					try {
-						System.out.print("▶ 첫번째 수를 입력하세요. : ");
-						inputValue = sc.nextLine();
+						numberVO = scanner.inputValue(numberVO);
 						
-						if("ESC".equals(inputValue)) {
+						if("ESC".equals(numberVO.getInputValue())) {
 							break outer;
-						} else if("AC".equals(inputValue)) {
-							calc.reset();
+						} else if("AC".equals(numberVO.getInputValue())) {
+							numberVO = new NumberVO();
 							continue outer;
 						} else {
-							calc.setFirstNum(Integer.parseInt(inputValue));
+							numberVO.setFirstNum(Integer.parseInt(numberVO.getInputValue()));
 							break;
 						}
-						
 					} catch (NumberFormatException e) {
-						System.out.println("※ 숫자만 입력하세요!");
+						printer.toString("※ 숫자만 입력하세요!", true);
 						continue;
 					}
 				} while (true);
+				
+				numberVO.setInputValue(null); // 초기화
 			}
 			
 			do {
-				System.out.println("초기화를 원하시면 'AC'를 입력하세요.");
-				System.out.print("▶ 연산자를 입력하세요.(+, -, *, /) : ");
-				inputValue = sc.nextLine();
+				printer.toString(null, true);
+				printer.toString("▶ 연산자를 입력하세요.(+, -, *, /) : ", false);
 				
-				if("ESC".equals(inputValue)) {
+				numberVO = scanner.inputValue(numberVO);
+				
+				if("ESC".equals(numberVO.getInputValue())) {
 					break outer;
-				} else if("AC".equals(inputValue)) {
-					calc.reset();
+				} else if("AC".equals(numberVO.getInputValue())) {
+					numberVO = new NumberVO();
 					continue outer;
 				} else {
-					String msg = calc.chechOperator(inputValue);
-					
-					if("".equals(msg)) {
+					String message = calc.chechOperator(numberVO.getInputValue());
+					if("".equals(message)) {
+						numberVO.setOperator(numberVO.getInputValue());
 						break;
-					}
-					else {
-						System.out.println(msg);
+					} else {
+						printer.toString(message, true);
 					}
 				}
 			} while (true);
 			
+			numberVO.setInputValue(null); // 초기화
+			
 			do {
+				printer.toString(null, true);
+				printer.toString("▶ 두번째 수를 입력하세요. : ", false);
+				
 				try {
-					System.out.println("초기화를 원하시면 'AC'를 입력하세요.");
-					System.out.print("▶ 두번째 수를 입력하세요. : ");
-					inputValue = sc.nextLine();
+					numberVO = scanner.inputValue(numberVO);
 					
-					if("ESC".equals(inputValue)) {
+					if("ESC".equals(numberVO.getInputValue())) {
 						break outer;
-					} else if("AC".equals(inputValue)) {
-						calc.reset();
+					} else if("AC".equals(numberVO.getInputValue())) {
+						numberVO = new NumberVO();
 						continue outer;
 					} else {
-						calc.setSecondNum(Integer.parseInt(inputValue));
+						numberVO.setSecondNum(Integer.parseInt(numberVO.getInputValue()));
 						break;
 					}
 				} catch (NumberFormatException e) {
-					System.out.println("※ 숫자만 입력하세요!");
+					printer.toString("※ 숫자만 입력하세요!", true);
 					continue;
 				}
 			} while (true);
 			
-			System.out.print("☞ 결과 : ");
-			System.out.println(calc.operate());
-			System.out.println();
+			numberVO.setInputValue(null); // 초기화
 			
+			Map<String, Object> resultMap = calc.operate(numberVO, storage);
+			
+			numberVO = (NumberVO)resultMap.get("numberVO");
+			storage = (Storage)resultMap.get("storage");
+			
+			printer.toString("☞ 결과 : " + storage.getLastResult(), true);
 		} while (true);
 		
 	}

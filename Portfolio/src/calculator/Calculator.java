@@ -4,44 +4,26 @@ import java.util.*;
 
 public class Calculator {
 
-	private String firstNum;
-	private String secondNum;
-	private String operator;
 	private String[] operatorArr = {"+", "-", "*", "/"};
-	
-	public void setFirstNum(int value) {
-		firstNum = Integer.toString(value);
-	}
-	
-	public String getFirstNum() {
-		return firstNum;
-	}
-	
-	public void setSecondNum(int value) {
-		secondNum = Integer.toString(value);
-	}
-	
-	public String getSecondNum() {
-		return secondNum;
-	}
 	
 	public String chechOperator(String inputValue) {
 		String msg = "";
 		List<String> operatorList = Arrays.asList(operatorArr);
 		
 		if(operatorList.indexOf(inputValue) < 0) {
-			return "※ 사칙 연산자만 입력하세요!(+, -, *, /)";
+			msg = "※ 사칙 연산자만 입력하세요!(+, -, *, /)";
 		}
 		
-		operator = inputValue;
 		return msg;
 	}
 	
-	public String operate() {
-		int first = Integer.parseInt(firstNum);
-		int second = Integer.parseInt(secondNum);
+	public Map<String, Object> operate(NumberVO numberVO, Storage storage) {
+		Map<String, Object> resultMap = new HashMap<>();
+		int first = Integer.parseInt(numberVO.getFirstNum());
+		int second = Integer.parseInt(numberVO.getSecondNum());
+		String operator = numberVO.getOperator();
+		
 		int result;
-		String resultMsg = "";
 		
 		if("+".equals(operator)) {
 			result = first + second;
@@ -53,15 +35,13 @@ public class Calculator {
 			result = first / second;
 		}
 		
-		resultMsg = firstNum + operator + secondNum + "=" + result;
-		firstNum = Integer.toString(result);
+		storage.putSavedList(result);
+		numberVO.setFirstNum(result);
 		
-		return resultMsg;
+		resultMap.put("storage", storage);
+		resultMap.put("numberVO", numberVO);
+		
+		return resultMap;
 	}
 	
-	public void reset() {
-		firstNum = null;
-		secondNum = null;
-	}
-
 }
